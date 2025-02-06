@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퇴사를 꿈꾸며....</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        button { font-size: 20px; padding: 10px 20px; cursor: pointer; }
+        #loading { display: none; font-size: 18px; margin-top: 20px; }
+        #result { margin-top: 20px; font-size: 24px; }
+    </style>
+</head>
+<body>
+    <h1>이번주는 이거다!</h1>
+    <button onclick="fetchLottoNumbers()">조회</button>
+    <div id="loading">
+        <img src="https://media.tenor.com/On7kvXhzml4AAAAi/loading-gif.gif" alt="로딩 중..." width="100">
+        <p>검색 중입니다...</p>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        function fetchLottoNumbers() {
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("result").innerHTML = "";
+
+            fetch("/lotto")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("loading").style.display = "none";
+                    const resultDiv = document.getElementById("result");
+                    resultDiv.innerHTML = "<h2>추천 번호</h2>";
+
+                    data.recommended_lotto_numbers.forEach((numbers, index) => {
+                        resultDiv.innerHTML += `<p><strong>추천 세트 ${index + 1}:</strong> ${numbers.join(", ")}</p>`;
+                    });
+                })
+                .catch(error => {
+                    document.getElementById("loading").style.display = "none";
+                    document.getElementById("result").innerHTML = "<p>데이터를 불러오는 중 오류 발생!</p>";
+                });
+        }
+    </script>
+</body>
+</html>
